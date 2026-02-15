@@ -7,7 +7,7 @@ const methodOverride = require("method-override");
 app.use(methodOverride("_method"));
 const ejsMate = require("ejs-mate");
 app.engine("ejs", ejsMate);
-const MONGO_URL = "mongodb://localhost:27017/vmart_tickets";
+const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost:27017/vmart_tickets";
 app.use(express.static(path.join(__dirname, "/public")));
 
 // MongoDB connection
@@ -105,8 +105,14 @@ app.get("/analytics", async (req, res) => {
     res.render("analytics", { tickets });
 });
 
-// Server
-const PORT = 3001;
-app.listen(PORT, () => {
-    console.log(`🎫 VMart Ticket System running on http://localhost:${PORT}`);
-});
+// Server - Only start if not in Vercel environment
+const PORT = process.env.PORT || 3001;
+
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🎫 VMart Ticket System running on http://localhost:${PORT}`);
+    });
+}
+
+// Export for Vercel
+module.exports = app;
