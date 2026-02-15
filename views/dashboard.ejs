@@ -1,0 +1,395 @@
+<% layout("layouts/boilerplate") %>
+
+    <style>
+        .dashboard-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .dashboard-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--card-color);
+        }
+
+        .stat-card.open::before {
+            --card-color: #4CAF50;
+        }
+
+        .stat-card.progress::before {
+            --card-color: #FF9800;
+        }
+
+        .stat-card.resolved::before {
+            --card-color: #2196F3;
+        }
+
+        .stat-card.closed::before {
+            --card-color: #9E9E9E;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card.open .stat-icon {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+        }
+
+        .stat-card.progress .stat-icon {
+            background: linear-gradient(135deg, #FF9800, #FFB74D);
+            color: white;
+        }
+
+        .stat-card.resolved .stat-icon {
+            background: linear-gradient(135deg, #2196F3, #42A5F5);
+            color: white;
+        }
+
+        .stat-card.closed .stat-icon {
+            background: linear-gradient(135deg, #9E9E9E, #BDBDBD);
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2C3E50;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #7F8C8D;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2C3E50;
+        }
+
+        .tickets-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .table th {
+            font-weight: 600;
+            border: none;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .ticket-id {
+            font-weight: 700;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .ticket-id:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .badge.status-open {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .badge.status-progress {
+            background: #FF9800;
+            color: white;
+        }
+
+        .badge.status-resolved {
+            background: #2196F3;
+            color: white;
+        }
+
+        .badge.status-closed {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        .priority-high {
+            color: #F44336;
+            font-weight: 700;
+        }
+
+        .priority-medium {
+            color: #FF9800;
+            font-weight: 600;
+        }
+
+        .priority-low {
+            color: #4CAF50;
+            font-weight: 500;
+        }
+
+        .priority-critical {
+            color: #D32F2F;
+            font-weight: 800;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #7F8C8D;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+    </style>
+
+    <div class="container-fluid mt-4">
+        <!-- Hero Section -->
+        <div class="dashboard-hero">
+            <h1><i class="fas fa-chart-line"></i> Support Dashboard</h1>
+            <p>Welcome to VMart Support System - Track and manage all customer tickets</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card open">
+                <div class="stat-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <div class="stat-number">
+                    <%= stats.open %>
+                </div>
+                <div class="stat-label">Open Tickets</div>
+            </div>
+
+            <div class="stat-card progress">
+                <div class="stat-icon">
+                    <i class="fas fa-spinner"></i>
+                </div>
+                <div class="stat-number">
+                    <%= stats.inProgress %>
+                </div>
+                <div class="stat-label">In Progress</div>
+            </div>
+
+            <div class="stat-card resolved">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-number">
+                    <%= stats.resolved %>
+                </div>
+                <div class="stat-label">Resolved</div>
+            </div>
+
+            <div class="stat-card closed">
+                <div class="stat-icon">
+                    <i class="fas fa-archive"></i>
+                </div>
+                <div class="stat-number">
+                    <%= stats.closed %>
+                </div>
+                <div class="stat-label">Closed</div>
+            </div>
+        </div>
+
+        <!-- Recent Tickets Section -->
+        <div class="section-header">
+            <h2><i class="fas fa-clock"></i> Recent Tickets</h2>
+            <a href="/tickets" class="btn btn-view">
+                View All Tickets <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="tickets-table">
+            <% if (tickets.length> 0) { %>
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Customer</th>
+                            <th>Subject</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% tickets.slice(0, 10).forEach(ticket=> { %>
+                            <tr>
+                                <td>
+                                    <a href="/tickets/<%= ticket._id %>" class="ticket-id">
+                                        <%= ticket.ticketNumber %>
+                                    </a>
+                                </td>
+                                <td>
+                                    <strong>
+                                        <%= ticket.customerName %>
+                                    </strong><br>
+                                    <small class="text-muted">
+                                        <%= ticket.customerEmail %>
+                                    </small>
+                                </td>
+                                <td>
+                                    <%= ticket.subject %>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <%= ticket.category %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="priority-<%= ticket.priority.toLowerCase() %>">
+                                        <%= ticket.priority %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge status-<%= ticket.status.toLowerCase().replace(' ', '') %>">
+                                        <%= ticket.status %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <%= new Date(ticket.createdAt).toLocaleDateString('en-IN', { day: 'numeric' ,
+                                        month: 'short' , year: 'numeric' }) %>
+                                </td>
+                                <td>
+                                    <a href="/tickets/<%= ticket._id %>" class="btn btn-sm btn-view">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Tickets Yet</h3>
+                        <p>Start by creating your first support ticket</p>
+                        <a href="/tickets/new" class="btn btn-view mt-3">
+                            <i class="fas fa-plus-circle"></i> Raise First Ticket
+                        </a>
+                    </div>
+                    <% } %>
+        </div>
+    </div>

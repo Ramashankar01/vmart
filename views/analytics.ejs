@@ -1,0 +1,407 @@
+<% layout("layouts/boilerplate") %>
+
+    <style>
+        .analytics-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .analytics-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7F8C8D;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2C3E50;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-title i {
+            color: #667eea;
+        }
+
+        .chart-bar {
+            margin-bottom: 1rem;
+        }
+
+        .chart-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #34495E;
+        }
+
+        .chart-bar-bg {
+            background: #E8E8E8;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s ease;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .bar-open {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        }
+
+        .bar-progress {
+            background: linear-gradient(135deg, #FF9800, #FFB74D);
+        }
+
+        .bar-resolved {
+            background: linear-gradient(135deg, #2196F3, #42A5F5);
+        }
+
+        .bar-closed {
+            background: linear-gradient(135deg, #9E9E9E, #BDBDBD);
+        }
+
+        .bar-low {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        }
+
+        .bar-medium {
+            background: linear-gradient(135deg, #FF9800, #FFB74D);
+        }
+
+        .bar-high {
+            background: linear-gradient(135deg, #F44336, #EF5350);
+        }
+
+        .bar-critical {
+            background: linear-gradient(135deg, #D32F2F, #E53935);
+        }
+
+        .bar-technical {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .bar-billing {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .bar-product {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .bar-service {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .bar-complaint {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+        }
+
+        .bar-other {
+            background: linear-gradient(135deg, #30cfd0, #330867);
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <% // Calculate statistics const totalTickets=tickets.length; // Status breakdown const statusCounts={ 'Open' :
+        tickets.filter(t=> t.status === 'Open').length,
+        'In Progress': tickets.filter(t => t.status === 'In Progress').length,
+        'Resolved': tickets.filter(t => t.status === 'Resolved').length,
+        'Closed': tickets.filter(t => t.status === 'Closed').length
+        };
+
+        // Priority breakdown
+        const priorityCounts = {
+        'Low': tickets.filter(t => t.priority === 'Low').length,
+        'Medium': tickets.filter(t => t.priority === 'Medium').length,
+        'High': tickets.filter(t => t.priority === 'High').length,
+        'Critical': tickets.filter(t => t.priority === 'Critical').length
+        };
+
+        // Category breakdown
+        const categoryCounts = {
+        'Technical': tickets.filter(t => t.category === 'Technical').length,
+        'Billing': tickets.filter(t => t.category === 'Billing').length,
+        'Product': tickets.filter(t => t.category === 'Product').length,
+        'Service': tickets.filter(t => t.category === 'Service').length,
+        'Complaint': tickets.filter(t => t.category === 'Complaint').length,
+        'Other': tickets.filter(t => t.category === 'Other').length
+        };
+
+        // Helper function to calculate percentage
+        const getPercentage = (count) => totalTickets > 0 ? (count / totalTickets * 100).toFixed(1) : 0;
+        %>
+
+        <div class="container-fluid mt-4">
+            <div class="analytics-header">
+                <h1><i class="fas fa-chart-pie"></i> Analytics Dashboard</h1>
+                <p>Comprehensive insights into ticket performance and trends</p>
+            </div>
+
+            <!-- Overview Stats -->
+            <div class="stats-overview">
+                <div class="stat-box">
+                    <div class="stat-number">
+                        <%= totalTickets %>
+                    </div>
+                    <div class="stat-label">Total Tickets</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">
+                        <%= statusCounts['Open'] %>
+                    </div>
+                    <div class="stat-label">Open</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">
+                        <%= statusCounts['In Progress'] %>
+                    </div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">
+                        <%= statusCounts['Resolved'] %>
+                    </div>
+                    <div class="stat-label">Resolved</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">
+                        <%= statusCounts['Closed'] %>
+                    </div>
+                    <div class="stat-label">Closed</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <!-- Status Distribution -->
+                <div class="chart-card">
+                    <h3 class="chart-title">
+                        <i class="fas fa-tasks"></i>
+                        Status Distribution
+                    </h3>
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span>Open</span>
+                            <span>
+                                <%= getPercentage(statusCounts['Open']) %>%
+                            </span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill bar-open"
+                                style="width: <%= getPercentage(statusCounts['Open']) %>%">
+                                <%= statusCounts['Open'] %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span>In Progress</span>
+                            <span>
+                                <%= getPercentage(statusCounts['In Progress']) %>%
+                            </span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill bar-progress"
+                                style="width: <%= getPercentage(statusCounts['In Progress']) %>%">
+                                <%= statusCounts['In Progress'] %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span>Resolved</span>
+                            <span>
+                                <%= getPercentage(statusCounts['Resolved']) %>%
+                            </span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill bar-resolved"
+                                style="width: <%= getPercentage(statusCounts['Resolved']) %>%">
+                                <%= statusCounts['Resolved'] %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span>Closed</span>
+                            <span>
+                                <%= getPercentage(statusCounts['Closed']) %>%
+                            </span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill bar-closed"
+                                style="width: <%= getPercentage(statusCounts['Closed']) %>%">
+                                <%= statusCounts['Closed'] %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Priority Distribution -->
+                <div class="chart-card">
+                    <h3 class="chart-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Priority Distribution
+                    </h3>
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span>Critical</span>
+                            <span>
+                                <%= getPercentage(priorityCounts['Critical']) %>%
+                            </span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill bar-critical"
+                                style="width: <%= getPercentage(priorityCounts['Critical']) %>%">
+                                <%= priorityCounts['Critical'] %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span>High</span>
+                            <span>
+                                <%= getPercentage(priorityCounts['High']) %>%
+                            </span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill bar-high"
+                                style="width: <%= getPercentage(priorityCounts['High']) %>%">
+                                <%= priorityCounts['High'] %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span>Medium</span>
+                            <span>
+                                <%= getPercentage(priorityCounts['Medium']) %>%
+                            </span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill bar-medium"
+                                style="width: <%= getPercentage(priorityCounts['Medium']) %>%">
+                                <%= priorityCounts['Medium'] %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-bar-label">
+                            <span>Low</span>
+                            <span>
+                                <%= getPercentage(priorityCounts['Low']) %>%
+                            </span>
+                        </div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill bar-low"
+                                style="width: <%= getPercentage(priorityCounts['Low']) %>%">
+                                <%= priorityCounts['Low'] %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Distribution -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    <i class="fas fa-tags"></i>
+                    Category Distribution
+                </h3>
+                <div class="row">
+                    <% Object.entries(categoryCounts).forEach(([category, count])=> { %>
+                        <div class="col-md-4 mb-3">
+                            <div class="chart-bar">
+                                <div class="chart-bar-label">
+                                    <span>
+                                        <%= category %>
+                                    </span>
+                                    <span>
+                                        <%= getPercentage(count) %>%
+                                    </span>
+                                </div>
+                                <div class="chart-bar-bg">
+                                    <div class="chart-bar-fill bar-<%= category.toLowerCase() %>"
+                                        style="width: <%= getPercentage(count) %>%">
+                                        <%= count %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+            </div>
+        </div>

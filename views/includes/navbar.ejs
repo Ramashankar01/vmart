@@ -1,0 +1,115 @@
+<style>
+    .navbar-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+        font-weight: 800;
+        font-size: 1.5rem;
+        color: white !important;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .navbar-brand i {
+        font-size: 1.8rem;
+    }
+
+    .navbar-brand:hover {
+        transform: scale(1.05);
+        transition: all 0.3s ease;
+    }
+
+    .nav-link {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
+        margin: 0 0.5rem;
+        padding: 0.5rem 1rem !important;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white !important;
+        transform: translateY(-2px);
+    }
+
+    .nav-link.active {
+        background: rgba(255, 255, 255, 0.25);
+        color: white !important;
+    }
+
+    .btn-raise-ticket {
+        background: white;
+        color: #667eea;
+        font-weight: 600;
+        padding: 0.6rem 1.5rem;
+        border-radius: 25px;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-raise-ticket:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        color: #764ba2;
+    }
+
+    .navbar-toggler {
+        border: 2px solid white;
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    @media (max-width: 768px) {
+        .navbar-collapse {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-ticket-alt"></i>
+            <span>VMart Support</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tickets">
+                        <i class="fas fa-list"></i> All Tickets
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/analytics">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </li>
+                <li class="nav-item ms-3">
+                    <a href="/tickets/new" class="btn btn-raise-ticket">
+                        <i class="fas fa-plus-circle"></i> Raise Ticket
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

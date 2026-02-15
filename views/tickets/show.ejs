@@ -1,0 +1,420 @@
+<% layout("layouts/boilerplate") %>
+
+    <style>
+        .ticket-detail-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        .ticket-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-status-header {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .ticket-body {
+            background: white;
+            border-radius: 0 0 20px 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e0e0e0;
+        }
+
+        .info-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #7F8C8D;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-label i {
+            color: #667eea;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: #2C3E50;
+            font-weight: 600;
+        }
+
+        .ticket-content {
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2C3E50;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .description-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            margin-bottom: 2rem;
+        }
+
+        .description-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #34495E;
+            white-space: pre-wrap;
+        }
+
+        .customer-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .customer-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .customer-detail {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .customer-detail i {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .status-open {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-inprogress {
+            background: #FF9800;
+            color: white;
+        }
+
+        .status-resolved {
+            background: #2196F3;
+            color: white;
+        }
+
+        .status-closed {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        .priority-critical {
+            color: #D32F2F;
+        }
+
+        .priority-high {
+            color: #F44336;
+        }
+
+        .priority-medium {
+            color: #FF9800;
+        }
+
+        .priority-low {
+            color: #4CAF50;
+        }
+
+        .action-buttons {
+            padding: 2rem;
+            background: #f8f9fa;
+            border-top: 3px solid #e0e0e0;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-delete {
+            background: #E74C3C;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #C0392B;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-back {
+            background: #95A5A6;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #7F8C8D;
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .notes-box {
+            background: #FFF9E6;
+            border-left: 5px solid #FFC107;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: #7F8C8D;
+        }
+
+        .timeline-item i {
+            color: #667eea;
+        }
+    </style>
+
+    <div class="ticket-detail-container">
+        <div class="ticket-header">
+            <div class="ticket-number">
+                <i class="fas fa-ticket-alt"></i>
+                <%= ticket.ticketNumber %>
+            </div>
+            <div class="ticket-status-header">
+                <%= ticket.status %>
+            </div>
+        </div>
+
+        <div class="ticket-body">
+            <!-- Ticket Info Grid -->
+            <div class="ticket-info-grid">
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Priority
+                    </div>
+                    <div class="info-value priority-<%= ticket.priority.toLowerCase() %>">
+                        <%= ticket.priority %>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-tags"></i>
+                        Category
+                    </div>
+                    <div class="info-value">
+                        <%= ticket.category %>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-building"></i>
+                        Department
+                    </div>
+                    <div class="info-value">
+                        <%= ticket.department %>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-user-tie"></i>
+                        Assigned To
+                    </div>
+                    <div class="info-value">
+                        <%= ticket.assignedTo %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ticket Content -->
+            <div class="ticket-content">
+                <!-- Customer Information -->
+                <div class="customer-card">
+                    <h3>
+                        <i class="fas fa-user-circle"></i>
+                        Customer Details
+                    </h3>
+                    <div class="customer-detail">
+                        <i class="fas fa-user"></i>
+                        <strong>
+                            <%= ticket.customerName %>
+                        </strong>
+                    </div>
+                    <div class="customer-detail">
+                        <i class="fas fa-envelope"></i>
+                        <%= ticket.customerEmail %>
+                    </div>
+                    <div class="customer-detail">
+                        <i class="fas fa-phone"></i>
+                        <%= ticket.customerPhone %>
+                    </div>
+                </div>
+
+                <!-- Subject -->
+                <div class="section-title">
+                    <i class="fas fa-heading"></i>
+                    Subject
+                </div>
+                <h2 style="font-size: 1.8rem; color: #2C3E50; margin-bottom: 2rem; font-weight: 700;">
+                    <%= ticket.subject %>
+                </h2>
+
+                <!-- Description -->
+                <div class="section-title">
+                    <i class="fas fa-align-left"></i>
+                    Description
+                </div>
+                <div class="description-box">
+                    <div class="description-text">
+                        <%= ticket.description %>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <% if (ticket.notes && ticket.notes.trim() !=='' ) { %>
+                    <div class="section-title">
+                        <i class="fas fa-sticky-note"></i>
+                        Additional Notes
+                    </div>
+                    <div class="notes-box">
+                        <div class="description-text">
+                            <%= ticket.notes %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                        <!-- Timeline -->
+                        <div class="section-title">
+                            <i class="fas fa-clock"></i>
+                            Timeline
+                        </div>
+                        <div class="timeline-item">
+                            <i class="fas fa-plus-circle"></i>
+                            <span><strong>Created:</strong>
+                                <%= new Date(ticket.createdAt).toLocaleString('en-IN') %>
+                            </span>
+                        </div>
+                        <div class="timeline-item">
+                            <i class="fas fa-edit"></i>
+                            <span><strong>Last Updated:</strong>
+                                <%= new Date(ticket.updatedAt).toLocaleString('en-IN') %>
+                            </span>
+                        </div>
+                        <% if (ticket.resolvedAt) { %>
+                            <div class="timeline-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span><strong>Resolved:</strong>
+                                    <%= new Date(ticket.resolvedAt).toLocaleString('en-IN') %>
+                                </span>
+                            </div>
+                            <% } %>
+                                <% if (ticket.closedAt) { %>
+                                    <div class="timeline-item">
+                                        <i class="fas fa-archive"></i>
+                                        <span><strong>Closed:</strong>
+                                            <%= new Date(ticket.closedAt).toLocaleString('en-IN') %>
+                                        </span>
+                                    </div>
+                                    <% } %>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="/tickets/<%= ticket._id %>/edit" class="btn-action btn-edit">
+                    <i class="fas fa-edit"></i> Edit Ticket
+                </a>
+                <form action="/tickets/<%= ticket._id %>?_method=DELETE" method="POST" style="display: inline;"
+                    onsubmit="return confirm('Are you sure you want to delete this ticket? This action cannot be undone.')">
+                    <button type="submit" class="btn-action btn-delete">
+                        <i class="fas fa-trash-alt"></i> Delete Ticket
+                    </button>
+                </form>
+                <a href="/tickets" class="btn-action btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to All Tickets
+                </a>
+            </div>
+        </div>
+    </div>
